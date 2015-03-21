@@ -132,6 +132,11 @@
 	color: #0099FF;
 
 }
+#download_error{
+	font-size: 1.1em;
+	color: #0099FF;
+
+}
 ::-webkit-input-placeholder { 
     color: white;
     opacity: .6;

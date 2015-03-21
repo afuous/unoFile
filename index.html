@@ -32,6 +32,7 @@
 					<h2 class="title">Download</h2>
 					<input class="input" id="downloadCode2" type="text" placeholder="Enter Code" onfocus="this.placeholder=''" onblur="this.placeholder='Enter Code'"/><br/>
 					<input class="input download_button button" type="button" value="Download!" id="download" disabled><br/>
+					<p id="download_error">File does not exist</p>
 				</div>
 			</div>
 		</div>
@@ -39,7 +40,9 @@
 	<script src="js/jquery-2.1.3.min.js"></script>
 	<script>
 		$(document).ready(function(){
+			var file = document.getElementById('file')
 			$('#uploading').hide();
+			$('#download_error').hide();
 			$('input').on('keyup', function(){
 				if($('#downloadCode1').val() != ''){
 					if(document.getElementById("uploadFile").value != "") {
@@ -76,6 +79,18 @@
 			$('#downloadCode1').focusout(function(){
 				$(document).unbind('keypress');
 			});
+			$('#file').click(function(){
+				document.body.onfocus = function(){
+					if(file.value.length && $('#downloadCode1').val() != ''){
+						console.log('file selected');
+						$('.upload_button').removeAttr('disabled');
+					}else{
+						console.log('file not selected');
+						$('.upload_button').attr('disabled', '');
+					}
+				    document.body.onfocus = null
+				}
+			});
 			function dgid(id) {
 				return document.getElementById(id);
 			}
@@ -93,22 +108,23 @@
 			};
 			
 			dgid("upload").onclick = function() {
+				$('#uploading').html('Uploading...');
 				$('#uploading').show();
 				var xhr = new XMLHttpRequest();
 				xhr.onreadystatechange = function() {
 					if(xhr.readyState == 4) {
 						var result = xhr.responseText;
 						if(result == 0) {
-							$('#uploading').html('success');
+							$('#uploading').html('Uploading "' + $('#downloadCode1').val() + '" was successful');
 						}
 						else if(result == 1) {
-							$('#uploading').html('already exists');
+							$('#uploading').html('Already exists');
 						}
 						else if(result == 2) {
-							$('#uploading').html('no spaces or slashes allowed in code');
+							$('#uploading').html('No spaces or slashes allowed in code');
 						}
 						else if(result == 3) {
-							$('#uploading').html('choose a file');
+							$('#uploading').html('Choose a file');
 						}
 					}
 				};
@@ -117,6 +133,7 @@
 			}
 			
 			dgid("download").onclick = function() {
+				$('#download_error').hide();
 				var xhr = new XMLHttpRequest();
 				xhr.onreadystatechange = function() {
 					if(xhr.readyState == 4) {
@@ -124,7 +141,8 @@
 							location = "/f/" + dgid("downloadCode2").value;
 						}
 						else {
-							alert("file does not exist");
+							$('#download_error').html('"' + $('#downloadCode2').val() + '" does not exist')
+							$('#download_error').show();
 						}
 					}
 				};
