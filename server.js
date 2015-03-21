@@ -10,7 +10,7 @@ http.createServer(function(req, res) {
 		res.end(fs.readFileSync(path));
 		return;
 	}
-	if(path == "") {
+	else if(path == "upload") {
 		if(req.method == "POST") {
 			var data = new Buffer(0);
 			req.on("data", function(chunk) {
@@ -22,10 +22,10 @@ http.createServer(function(req, res) {
 				if(!fs.existsSync("files")) {
 					fs.mkdirSync("files");
 				}
-				if(file == "") {
+				else if(file == "") {
 					res.end("3");
 				}
-				else if(~code.indexOf(" ")) {
+				else if(~code.indexOf(" ") || ~code.indexOf("\\") || ~code.indexOf("/")) {
 					res.end("2");
 				}
 				else if(fs.existsSync("files/" + code)) {
@@ -39,15 +39,24 @@ http.createServer(function(req, res) {
 			});
 		}
 		else {
-			res.end(fs.readFileSync("index.html"));
+			res.end("");
 		}
 	}
-	else if(fs.existsSync("files/" + path)) {
-		var files = fs.readdirSync("files/" + path);
-		res.setHeader("Content-disposition", "attachment; filename=" + files[0]);
-		res.end(fs.readFileSync("files/" + path + "/" + files[0]));
+	else if(path == "exists") {
+		res.end(fs.existsSync("files/" + get.code).toString());
+	}
+	else if(path.substring(0, 2) == "f/") {
+		var code = path.substring(2);
+		if(fs.existsSync("files/" + code)) {
+			var files = fs.readdirSync("files/" + code);
+			res.setHeader("Content-disposition", "attachment; filename=" + files[0]);
+			res.end(fs.readFileSync("files/" + code + "/" + files[0]));
+		}
+		else {
+			res.end("This file does not exist");
+		}
 	}
 	else {
-		res.end("error");
+		res.end(fs.readFileSync("index.html"));
 	}
 }).listen(8080);

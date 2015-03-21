@@ -105,19 +105,31 @@
 							$('#uploading').html('already exists');
 						}
 						else if(result == 2) {
-							$('#uploading').html('no spaces allowed in code');
+							$('#uploading').html('no spaces or slashes allowed in code');
 						}
 						else if(result == 3) {
 							$('#uploading').html('choose a file');
 						}
 					}
 				};
-				xhr.open("POST", "/?file=" + dgid("file").value.substring(dgid("file").value.lastIndexOf("\\") + 1) + "&code=" + dgid("downloadCode1").value, true);
+				xhr.open("POST", "/upload?file=" + dgid("file").value.substring(dgid("file").value.lastIndexOf("\\") + 1) + "&code=" + dgid("downloadCode1").value, true);
 				xhr.send(dgid("file").files[0]);
 			}
 			
 			dgid("download").onclick = function() {
-				location = dgid("downloadCode2").value;
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function() {
+					if(xhr.readyState == 4) {
+						if(xhr.responseText == "true") {
+							location = "/f/" + dgid("downloadCode2").value;
+						}
+						else {
+							alert("file does not exist");
+						}
+					}
+				};
+				xhr.open("GET", "/exists?code=" + dgid("downloadCode2").value, true);
+				xhr.send();
 			}
 			document.getElementById("file").onchange = function () {
 			    document.getElementById("uploadFile").value = this.value.substring(this.value.lastIndexOf("\\") + 1);
