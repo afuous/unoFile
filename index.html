@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  		<meta name="viewport" content="width=device-width, initial-scale=1">
+  		<title>unoFile</title>
+  		<link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+  		<link href='http://fonts.googleapis.com/css?family=Roboto:300' rel='stylesheet' type='text/css'>
+  		<link rel="stylesheet" href="css/index.css" type="text/css">
+  		<link rel="stylesheet" href="css/bootstrap.min.css">
+	</head>
+
+	<body>
+		<div class="topbar">
+			<h1 class="title" id="main_title">unoFile</h1>
+		</div>	
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-md-6 center">
+					<h2 class="title">Upload</h2>
+					<div class="fileUpload btn btn-primary">
+						<input class="input button upload" id="file" type="file" value="Choose File">Choose File</input><br/>
+					</div><br/>
+					<input id="uploadFile" placeholder="No file selected" disabled="disabled" /><br/>
+					<input class="input" id="downloadCode1" type="text" placeholder="Enter Code" onfocus="this.placeholder=''" onblur="this.placeholder='Enter Code'" />
+					<input type="button" class="button side_button" id="random" value="Random" /><br/>
+					<input class="input upload_button button" type="button" value="Upload!" id="upload" disabled><br/>
+					<p id="uploading">Uploading...</p>
+				</div>
+				<div class="col-md-6 center">
+					<h2 class="title">Download</h2>
+					<input class="input" id="downloadCode2" type="text" placeholder="Enter Code" onfocus="this.placeholder=''" onblur="this.placeholder='Enter Code'"/><br/>
+					<input class="input download_button button" type="button" value="Download!" id="download" disabled><br/>
+				</div>
+			</div>
+		</div>
+
+	<script src="js/jquery-2.1.3.min.js"></script>
+	<script>
+		$(document).ready(function(){
+			$('#uploading').hide();
+			$('input').on('keyup', function(){
+				if($('#downloadCode1').val() != ''){
+					if(document.getElementById("uploadFile").value != "") {
+					   $('.upload_button').removeAttr('disabled');
+					}
+				}else{
+					$('.upload_button').attr('disabled', '');
+				}
+			});
+			$('input').on('keyup', function(){
+				if($('#downloadCode2').val() != ''){
+					$('.download_button').removeAttr('disabled');
+				}else{
+					$('.download_button').attr('disabled', '');
+				}
+			});
+			$('#downloadCode2').on('focus', function(){
+				$(document).keypress(function(e) {
+				    if(e.which == 13 && !$('.download_button').is(':disabled')) {
+				        $('.download_button').trigger('click');
+				    }
+				});
+			});
+			$('#downloadCode1').on('focus', function(){
+				$(document).keypress(function(e) {
+				    if(e.which == 13 && !$('.upload_button').is(':disabled')) {
+				        $('.upload_button').trigger('click');
+				    }
+				});
+			});
+			$('#downloadCode2').focusout(function(){
+				$(document).unbind('keypress');
+			});
+			$('#downloadCode1').focusout(function(){
+				$(document).unbind('keypress');
+			});
+			function dgid(id) {
+				return document.getElementById(id);
+			}
+			
+			dgid("random").onclick = function() {
+				var str = "";
+				for(var i = 0; i < 16; i++) {
+					var rand = Math.floor(Math.random() * 62);
+					str += String.fromCharCode(rand + ((rand < 26) ? 97 : ((rand < 52) ? 39 : -4)));
+				}
+				dgid("downloadCode1").value = str;
+				if(document.getElementById("uploadFile").value != "") {
+				   $('.upload_button').removeAttr('disabled');
+				}
+			};
+			
+			dgid("upload").onclick = function() {
+				$('#uploading').show();
+				var xhr = new XMLHttpRequest();
+				xhr.onreadystatechange = function() {
+					if(xhr.readyState == 4) {
+						var result = xhr.responseText;
+						if(result == 0) {
+							$('#uploading').html('success');
+						}
+						else if(result == 1) {
+							$('#uploading').html('already exists');
+						}
+						else if(result == 2) {
+							$('#uploading').html('no spaces allowed in code');
+						}
+						else if(result == 3) {
+							$('#uploading').html('choose a file');
+						}
+					}
+				};
+				xhr.open("POST", "/?file=" + dgid("file").value.substring(dgid("file").value.lastIndexOf("\\") + 1) + "&code=" + dgid("downloadCode1").value, true);
+				xhr.send(dgid("file").files[0]);
+			}
+			
+			dgid("download").onclick = function() {
+				location = dgid("downloadCode2").value;
+			}
+			document.getElementById("file").onchange = function () {
+			    document.getElementById("uploadFile").value = this.value.substring(this.value.lastIndexOf("\\") + 1);
+			};
+		});
+	</script>
+	</body>
+</html>
