@@ -22,10 +22,18 @@ http.createServer(function(req, res) {
 				if(!fs.existsSync("files")) {
 					fs.mkdirSync("files");
 				}
-				else if(file == "") {
+				var any = false;
+				var invalid = "\\/\"\'<>{}:%|?^+` \t";
+				for(var i = 0; i < invalid.length; i++) {
+					if(~code.indexOf(invalid.charAt(i))) {
+						any = true;
+						break;
+					}
+				}
+				if(any) {
 					res.end("3");
 				}
-				else if(~code.indexOf(" ") || ~code.indexOf("\\") || ~code.indexOf("/")) {
+				else if(file == "") {
 					res.end("2");
 				}
 				else if(fs.existsSync("files/" + code)) {
