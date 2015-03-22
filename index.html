@@ -97,9 +97,9 @@
 			
 			dgid("random").onclick = function() {
 				var str = "";
-				for(var i = 0; i < 16; i++) {
-					var rand = Math.floor(Math.random() * 62);
-					str += String.fromCharCode(rand + ((rand < 26) ? 97 : ((rand < 52) ? 39 : -4)));
+				for(var i = 0; i < 8; i++) {
+					var rand = Math.floor(Math.random() * 36);
+					str += String.fromCharCode(rand + ((rand < 10) ? 48 : 87));
 				}
 				dgid("downloadCode1").value = str;
 				if(document.getElementById("uploadFile").value != "") {
