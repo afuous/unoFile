@@ -67,4 +67,4 @@ http.createServer(function(req, res) {
 	else {
 		res.end(fs.readFileSync("index.html"));
 	}
-}).listen(8080);
+}).listen(80);
