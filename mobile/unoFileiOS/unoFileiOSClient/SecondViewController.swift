@@ -111,81 +111,92 @@ class SecondViewController: UIViewController, UIImagePickerControllerDelegate, U
         var code = codeField.text.stringByTrimmingCharactersInSet(NSCharacterSet(charactersInString: " "))
         ip = ipField.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
         if (code != "" && ip != "" && imageStatus != ""){
-            
-            var response: NSURLResponse? = nil
-            var error: NSError? = nil
-            
-            
-            var urlExists = NSURL(string: "http://" + ip + "/exists?code=" + code + "")
-            var requestExists = NSMutableURLRequest(URL: urlExists!)
-            requestExists.HTTPMethod = "POST"
-            let replyExists = NSURLConnection.sendSynchronousRequest(requestExists, returningResponse:&response, error:&error)
-            let resultsExists = NSString(data:replyExists!, encoding:NSUTF8StringEncoding)
-            println( "Exists: \(resultsExists) ")
-            
-            if (resultsExists == "false" && imageStatus != ""){
-                
-                if (isImage){
-                    var imageData = UIImageJPEGRepresentation(imageChosen, 90)
-                    
-                    
-                    var url = NSURL(string: "http://" + ip + "/upload?file=image.jpg&code=" + code + "")!
-                    var request = NSMutableURLRequest(URL: url)
-                    request.HTTPMethod = "POST"
-                    request.HTTPBody = imageData
-
-                    let reply =  NSURLConnection.sendSynchronousRequest(request, returningResponse:&response, error:&error)
-                    let results = NSString(data:reply!, encoding:NSUTF8StringEncoding)
-                    println("uploaded \(results)")
-                   
-                    if (results == "3"){
-                        status.text = "cannot use characters: \\/\"\'<>{}:%|?^+` \t"
-                    }
-                    else if (results == "2"){
-                        status.text = "please enter a code"
-                    }
-                    else {
-                        status.text = "uploaded " + code + ""
-                        
-                    }
-
+            var charIsIn:Bool = false
+            for char in "\\/\"\'<>{}:%|?^+` \t"{
+                if (code.rangeOfString(String(char)) != nil) {
+                    charIsIn = true
                 }
-                else if (isVideo){
-                    var videoData = NSData(contentsOfURL: videoChosen)
-                    
-                    var url = NSURL(string: "http://" + ip + "/upload?file=video.mov&code=" + code + "")!
-                    var request = NSMutableURLRequest(URL: url)
-                    request.HTTPMethod = "POST"
-                    request.HTTPBody = videoData
-                    
-                    let reply =  NSURLConnection.sendSynchronousRequest(request, returningResponse:&response, error:&error)
-                    let results = NSString(data:reply!, encoding:NSUTF8StringEncoding)
-                    println("uploaded \(results)")
-                    if (results == "3"){
-                        status.text = "cannot use characters: \\/\"\'<>{}:%|?^+` \t"
-                    }
-                    else if (results == "2"){
-                        status.text = "please enter a code"
-                    }
-                    else {
-                        status.text = "uploaded " + code + ""
-                        
-                    }
-
-                }
-        
             }
-            else if(resultsExists == "true"){
-                status.text = "already exists"
+            if (charIsIn){
+                status.text = "cannot use characters: \\/\"\'<>{}:%|?^+` \t"
             }
             else {
-                status.text = "code, URL, or file is missing"
+                var response: NSURLResponse? = nil
+                var error: NSError? = nil
+                var urlExists = NSURL(string: "http://" + ip + "/exists?code=" + code + "")!
+                var requestExists = NSMutableURLRequest(URL: urlExists)
+                requestExists.HTTPMethod = "POST"
+                let replyExists = NSURLConnection.sendSynchronousRequest(requestExists, returningResponse:&response, error:&error)
+                let resultsExists = NSString(data:replyExists!, encoding:NSUTF8StringEncoding)
+                println( "Exists: \(resultsExists) ")
+                if (resultsExists == "false" && imageStatus != ""){
+                    if (isImage){
+                        
+                        var imageData = UIImageJPEGRepresentation(imageChosen, 90)
+                        var url = NSURL(string: "http://" + ip + "/upload?file=image.jpg&code=" + code + "")!
+                        var request = NSMutableURLRequest(URL: url)
+                        request.HTTPMethod = "POST"
+                        request.HTTPBody = imageData
+                        
+                        let reply =  NSURLConnection.sendSynchronousRequest(request, returningResponse:&response, error:&error)
+                        let results = NSString(data:reply!, encoding:NSUTF8StringEncoding)
+                        println("result: \(results)")
+                        
+                        if code.rangeOfString(" ") != nil{
+                            println("spaces")
+                        }
+                        if (results == "3"){
+                            //status.text = "cannot use characters: \\/\"\'<>{}:%|?^+` \t"
+                            println("nil")
+                        }
+                        else if (results == "2"){
+                            status.text = "please enter a code"
+                        }
+                        else {
+                            status.text = "uploaded " + code + ""
+                            
+                        }
+                        
+                    }
+                    else if (isVideo){
+                        var videoData = NSData(contentsOfURL: videoChosen)
+                        
+                        var url = NSURL(string: "http://" + ip + "/upload?file=video.mov&code=" + code + "")!
+                        var request = NSMutableURLRequest(URL: url)
+                        request.HTTPMethod = "POST"
+                        request.HTTPBody = videoData
+                        
+                        let reply =  NSURLConnection.sendSynchronousRequest(request, returningResponse:&response, error:&error)
+                        let results = NSString(data:reply!, encoding:NSUTF8StringEncoding)
+                        println("uploaded \(results)")
+                        if (results == "3"){
+                            status.text = "cannot use characters: \\/\"\'<>{}:%|?^+` \t"
+                        }
+                        else if (results == "2"){
+                            status.text = "please enter a code"
+                        }
+                        else {
+                            status.text = "uploaded " + code + ""
+                            
+                        }
+                        
+                    }
+                    
+                }
+                else if(resultsExists == "true"){
+                    status.text = "already exists"
+                }
+                else {
+                    status.text = "code, URL, or file is missing"
+                }
+                
             }
-
+        
         }
-        else{
-            status.text = "code, URL, or file is missing"
+        else {
+            self.status.text = "code, URL, or file is missing"
         }
+    
         
     }
     

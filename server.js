@@ -64,7 +64,10 @@ http.createServer(function(req, res) {
 			res.end("This file does not exist");
 		}
 	}
+	else if(path == "ping") {
+		res.end("pong");
+	}
 	else {
 		res.end(fs.readFileSync("index.html"));
 	}
-}).listen(80);
+}).listen(8080);
