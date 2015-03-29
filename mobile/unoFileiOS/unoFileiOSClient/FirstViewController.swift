@@ -21,6 +21,9 @@ class FirstViewController: UIViewController {
     var status = UILabel(frame: CGRect(x: 0, y: 0, width: 0, height: 0))
     override func viewDidLoad() {
         
+        
+        self.view.backgroundColor = UIColor(red: 71/255, green: 71/255, blue: 71/255, alpha: 1)
+        
         //Adds Title Label
         var downloadLabel = UILabel(frame: CGRect(x: 0, y: 0, width: screenWidth, height: 100))
         downloadLabel.text = "unoFile"
@@ -35,6 +38,7 @@ class FirstViewController: UIViewController {
         codeField = UITextField(frame: CGRect(x: screenWidth/2 - 100, y: 150, width: 200, height: 40))
         //green 70DB70
         //blue 0099FF
+        codeField.borderStyle = UITextBorderStyle.RoundedRect
         codeField.placeholder = "Enter Code"
         codeField.textAlignment = NSTextAlignment(rawValue: 1)!
         codeField.backgroundColor = UIColor(red: 153, green: 153, blue: 153, alpha: 0.5)
@@ -55,6 +59,7 @@ class FirstViewController: UIViewController {
         ipField = UITextField(frame: CGRect(x: screenWidth/2 - 100, y: 300, width: 200, height: 40))
         //green 70DB70
         //blue 0099FF
+        ipField.borderStyle = UITextBorderStyle.RoundedRect
         ipField.placeholder = "URL/IP Address"
         ipField.textAlignment = NSTextAlignment(rawValue: 1)!
         ipField.backgroundColor = UIColor(red: 153, green: 153, blue: 153, alpha: 0.5)
@@ -63,9 +68,10 @@ class FirstViewController: UIViewController {
         
         //Adds Download Button
         var downloadButton = UIButton.buttonWithType(UIButtonType.System) as UIButton
+        downloadButton.layer.cornerRadius = 11
         downloadButton.frame = CGRectMake(screenWidth/2 - 100, 200, 200, 50)
         downloadButton.setTitle("Download!", forState: UIControlState())
-        downloadButton.backgroundColor = UIColor(red: 0/255, green:       153/255, blue: 255/255, alpha: 1)
+        downloadButton.backgroundColor = UIColor(red: 0/255, green: 153/255, blue: 255/255, alpha: 1)
         downloadButton.addTarget(self, action: "downloadButton:", forControlEvents: UIControlEvents.TouchUpInside)
         downloadButton.setTitleColor(UIColor(red: 255, green: 255, blue: 255, alpha: 1), forState: UIControlState())
         self.view.addSubview(downloadButton)
@@ -87,40 +93,45 @@ class FirstViewController: UIViewController {
     @IBAction func downloadButton(sender: AnyObject) {
         code = codeField.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
         ip = ipField.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
-        var response: NSURLResponse? = nil
-        var error: NSError? = nil
-        var urlExistsU = NSURL(string: "http://" + ip + "/ping")
-        var requestExistsU = NSMutableURLRequest(URL: urlExistsU!)
-        requestExistsU.HTTPMethod = "POST"
-        let replyExistsU = NSURLConnection.sendSynchronousRequest(requestExistsU, returningResponse:&response, error:&error)
-        let resultsExistsU = NSString(data:replyExistsU!, encoding:NSUTF8StringEncoding)
-        println( "Exists: \(resultsExistsU) ")
-        
-        if (resultsExistsU == "pong"){
-            if (code != "" && ip != ""){
-                var response: NSURLResponse? = nil
-                var error: NSError? = nil
-                var urlExists = NSURL(string: "http://" + ip + "/exists?code=" + code + "")
-                var requestExists = NSMutableURLRequest(URL: urlExists!)
-                requestExists.HTTPMethod = "POST"
-                let replyExists = NSURLConnection.sendSynchronousRequest(requestExists, returningResponse:&response, error:&error)
-                let resultsExists = NSString(data:replyExists!, encoding:NSUTF8StringEncoding)
-                println( "Exists: \(resultsExists) ")
-                
-                if (resultsExists == "true"){
-                    url = "http://" + ip + "/f/" + code + ""
-                    UIApplication.sharedApplication().openURL(NSURL(string: url)!)
+        if (code != "" && ip != ""){
+            var response: NSURLResponse? = nil
+            var error: NSError? = nil
+            var urlExistsU = NSURL(string: "http://" + ip + "/ping")
+            var requestExistsU = NSMutableURLRequest(URL: urlExistsU!)
+            requestExistsU.HTTPMethod = "POST"
+            let replyExistsU = NSURLConnection.sendSynchronousRequest(requestExistsU, returningResponse:&response, error:&error)
+            let resultsExistsU = NSString(data:replyExistsU!, encoding:NSUTF8StringEncoding)
+            println( "Exists: \(resultsExistsU) ")
+            
+            if (resultsExistsU == "pong"){
+                if (code != "" && ip != ""){
+                    var response: NSURLResponse? = nil
+                    var error: NSError? = nil
+                    var urlExists = NSURL(string: "http://" + ip + "/exists?code=" + code + "")
+                    var requestExists = NSMutableURLRequest(URL: urlExists!)
+                    requestExists.HTTPMethod = "POST"
+                    let replyExists = NSURLConnection.sendSynchronousRequest(requestExists, returningResponse:&response, error:&error)
+                    let resultsExists = NSString(data:replyExists!, encoding:NSUTF8StringEncoding)
+                    println( "Exists: \(resultsExists) ")
+                    
+                    if (resultsExists == "true"){
+                        url = "http://" + ip + "/f/" + code + ""
+                        UIApplication.sharedApplication().openURL(NSURL(string: url)!)
+                    }
+                    else {
+                        status.text = "file doesn't exist"
+                    }
                 }
                 else {
-                    status.text = "file doesn't exist"
+                    status.text = "code or URL is missing"
                 }
             }
             else {
-                status.text = "code or URL is missing"
+                status.text = "server does not exist"
             }
         }
-        else {
-            status.text = "server does not exist"
+        else{
+            status.text = "code or URL is missing"
         }
         
     }
@@ -128,7 +139,6 @@ class FirstViewController: UIViewController {
         self.view.endEditing(true)
     }
     
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.

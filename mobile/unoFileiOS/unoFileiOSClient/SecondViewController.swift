@@ -26,7 +26,8 @@ class SecondViewController: UIViewController, UIImagePickerControllerDelegate, U
     var isImage = false
 
     override func viewDidLoad() {
-        
+        self.view.backgroundColor = UIColor(red: 71/255, green: 71/255, blue: 71/255, alpha: 1)
+
         //Adds Title Label
         var uploadLabel = UILabel(frame: CGRect(x: 0, y: 0, width: screenWidth, height: 100))
         uploadLabel.text = "unoFile"
@@ -38,7 +39,7 @@ class SecondViewController: UIViewController, UIImagePickerControllerDelegate, U
         self.view.addSubview(uploadLabel)
         
         status = UILabel(frame: CGRect(x: 0, y: 350, width: screenWidth, height: 40))
-        status.text = ""
+        status.text = "--"
         status.font = UIFont(name: "HelveticaNeue-UltraLight", size: 25)
         status.textAlignment = NSTextAlignment(rawValue: 1)!
         status.textColor = UIColor(red: 0, green: 153/255, blue: 255/255, alpha: 1)
@@ -47,7 +48,7 @@ class SecondViewController: UIViewController, UIImagePickerControllerDelegate, U
         self.view.addSubview(status)
         
         imageStatus = UILabel(frame: CGRect(x: 0, y: 200, width: screenWidth, height: 40))
-        imageStatus.text = ""
+        imageStatus.text = "--"
         imageStatus.font = UIFont(name: "HelveticaNeue-UltraLight", size: 25)
         imageStatus.textAlignment = NSTextAlignment(rawValue: 1)!
         imageStatus.textColor = UIColor(red: 0, green: 153/255, blue: 255/255, alpha: 1)
@@ -57,6 +58,7 @@ class SecondViewController: UIViewController, UIImagePickerControllerDelegate, U
         
         var uploadButton = UIButton.buttonWithType(UIButtonType.System) as UIButton
         uploadButton.frame = CGRectMake(screenWidth/2 - 100, 300, 200, 50)
+        uploadButton.layer.cornerRadius = 11
         uploadButton.setTitle("Upload!", forState: UIControlState())
         uploadButton.backgroundColor = UIColor(red: 0/255, green: 153/255, blue: 255/255, alpha: 1)
         uploadButton.addTarget(self, action: "upload:", forControlEvents: UIControlEvents.TouchUpInside)
@@ -66,6 +68,7 @@ class SecondViewController: UIViewController, UIImagePickerControllerDelegate, U
         
         var pick = UIButton.buttonWithType(UIButtonType.System) as UIButton
         pick.frame = CGRectMake(screenWidth/2 - 100, 150, 200, 40)
+        pick.layer.cornerRadius = 11
         pick.setTitleColor(UIColor(red: 255, green: 255, blue: 255, alpha: 1), forState: UIControlState())
         pick.setTitle("Choose file", forState: UIControlState())
         pick.backgroundColor = UIColor(red: 0/255, green:       153/255, blue: 255/255, alpha: 1)
@@ -76,6 +79,7 @@ class SecondViewController: UIViewController, UIImagePickerControllerDelegate, U
         codeField = UITextField(frame: CGRect(x: screenWidth/2 - 100, y: 250, width: 200, height: 40))
         //green 70DB70
         //blue 0099FF
+        codeField.borderStyle = UITextBorderStyle.RoundedRect
         codeField.placeholder = "Choose Code"
         codeField.textAlignment = NSTextAlignment(rawValue: 1)!
         codeField.backgroundColor = UIColor(red: 153, green: 153, blue: 153, alpha: 0.5)
@@ -87,6 +91,7 @@ class SecondViewController: UIViewController, UIImagePickerControllerDelegate, U
         //green 70DB70
         //blue 0099FF
         ipField.placeholder = "URL/IP Address"
+        ipField.borderStyle = UITextBorderStyle.RoundedRect
         ipField.textAlignment = NSTextAlignment(rawValue: 1)!
         ipField.backgroundColor = UIColor(red: 153, green: 153, blue: 153, alpha: 0.5)
         textFieldShouldReturn(ipField)
@@ -110,7 +115,7 @@ class SecondViewController: UIViewController, UIImagePickerControllerDelegate, U
     @IBAction func upload(sender: AnyObject) {
         var code = codeField.text.stringByTrimmingCharactersInSet(NSCharacterSet(charactersInString: " "))
         ip = ipField.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
-        if (code != "" && ip != "" && imageStatus != ""){
+        if (code != "" && ip != "" && imageStatus != "--"){
             var charIsIn:Bool = false
             for char in "\\/\"\'<>{}:%|?^+` \t"{
                 if (code.rangeOfString(String(char)) != nil) {
@@ -216,7 +221,7 @@ class SecondViewController: UIViewController, UIImagePickerControllerDelegate, U
             isVideo = true
             isImage = false
         }
-        
+        status.text = "--"
         
     }
     

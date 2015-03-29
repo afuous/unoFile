@@ -125,7 +125,7 @@
 						if(xhr.readyState == 4) {
 							var result = xhr.responseText;
 							if(result == 0) {
-								$('#uploading').html('Uploading "' + $('#downloadCode1').val() + '" was successful');
+								$('#uploading').html('Uploaded ' + $('#downloadCode1').val() + '');
 							}
 							else if(result == 1) {
 								$('#uploading').html('Already exists');
