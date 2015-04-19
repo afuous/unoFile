@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">UnoFile</string>
+    <string name="title_section1">Upload</string>
+    <string name="title_section2">Download</string>
+
+    <!-- Upload Fragment -->
+    <string name="download_title">Download</string>
+    <string name="download_button">Download</string>
+
+    <string name="download_code">Download Code</string>
+    <string name="optional_password">Optional Password</string>
+
+    <!-- Upload Fragment -->
+    <string name="upload_title">Upload</string>
+    <string name="choose_file">Choose File</string>
+    <string name="upload_button">Upload</string>
+
+</resources>
