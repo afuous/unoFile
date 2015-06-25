@@ -17,8 +17,8 @@ http.createServer(function(req, res) {
 				data = Buffer.concat([data, chunk]);
 			});
 			req.on("end", function() {
-				var file = get.file;
-				var code = get.code;
+				var file = unescape(get.file);
+				var code = unescape(get.code);
 				if(!fs.existsSync("files")) {
 					fs.mkdirSync("files");
 				}
@@ -51,10 +51,10 @@ http.createServer(function(req, res) {
 		}
 	}
 	else if(path == "exists") {
-		res.end(fs.existsSync("files/" + get.code).toString());
+		res.end(fs.existsSync("files/" + unescape(get.code)).toString());
 	}
 	else if(path.substring(0, 2) == "f/") {
-		var code = path.substring(2);
+		var code = unescape(path.substring(2));
 		if(fs.existsSync("files/" + code)) {
 			var files = fs.readdirSync("files/" + code);
 			res.setHeader("Content-disposition", "attachment; filename=" + files[0]);

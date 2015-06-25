@@ -138,7 +138,7 @@
 							}
 						}
 					};
-					xhr.open("POST", "/upload?file=" + dgid("file").value.substring(dgid("file").value.lastIndexOf("\\") + 1) + "&code=" + dgid("downloadCode1").value, true);
+					xhr.open("POST", "/upload?file=" + escape(dgid("file").value.substring(dgid("file").value.lastIndexOf("\\") + 1)) + "&code=" + escape(dgid("downloadCode1").value), true);
 					xhr.send(dgid("file").files[0]);
 				}else{
 					$('#uploading').html('Spaces and the following characters are not allowed in the code<br/> \\ / \" \' < > { } : % | ? ^ + ` ');
@@ -151,8 +151,9 @@
 				var xhr = new XMLHttpRequest();
 				xhr.onreadystatechange = function() {
 					if(xhr.readyState == 4) {
+						console.log(xhr.responseText);
 						if(xhr.responseText == "true") {
-							location = "/f/" + dgid("downloadCode2").value;
+							location = "/f/" + escape(dgid("downloadCode2").value);
 						}
 						else {
 							$('#download_error').html('"' + $('#downloadCode2').val() + '" does not exist')
@@ -160,7 +161,7 @@
 						}
 					}
 				};
-				xhr.open("GET", "/exists?code=" + dgid("downloadCode2").value, true);
+				xhr.open("GET", "/exists?code=" + escape(dgid("downloadCode2").value), true);
 				xhr.send();
 			}
 			document.getElementById("file").onchange = function () {
