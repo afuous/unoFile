@@ -75,7 +75,7 @@ http.createServer(function(req, res) {
 			db.run("CREATE TABLE IF NOT EXISTS Files (code TEXT, isForever TEXT, fileName TEXT, fileData BLOB)");
 			db.all("SELECT * FROM Files WHERE code = '" + code + "'", function(err, result) {
 				if (typeof(result) != "undefined"&&result.length == 1){
-					if (result.forever == "false"){
+					if (result[0].forever == "false"){
 						db.run("DELETE FROM Files WHERE code = '"+code+"'");
 					}
 					res.setHeader("Content-disposition", "attachment; filename=" + result[0].fileName);
