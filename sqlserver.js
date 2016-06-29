@@ -21,8 +21,13 @@ http.createServer(function(req, res) {
 			req.on("end", function() {
 				var file = unescape(get.file);
 				var code = unescape(get.code);
+				//Ensures that isForever must be a string, true or false
+				var isForever = "true";
+				if (get.forever == "false"){
+					isForever = "false";
+				}
 				db.serialize(function() {
-					db.run("CREATE TABLE IF NOT EXISTS Files (code TEXT, fileName TEXT, fileData BLOB)");
+					db.run("CREATE TABLE IF NOT EXISTS Files (code TEXT, isForever TEXT, fileName TEXT, fileData BLOB)");
  					db.all("SELECT code FROM Files WHERE code = '" + code + "'", function(err, result) {
  						console.log(result);
  						var any = false;
@@ -44,7 +49,8 @@ http.createServer(function(req, res) {
 							console.log(typeof(result))
 						}
 						else {
- 							var sql = db.prepare("INSERT INTO Files VALUES ('"+ [code, file].join("','")+ "', ?)");
+							var isForever = isForever
+ 							var sql = db.prepare("INSERT INTO Files VALUES ('"+ [code, isForever, file].join("','")+ "', ?)");
  							sql.run(data);
  							sql.finalize();
  							res.end("0");
@@ -58,7 +64,7 @@ http.createServer(function(req, res) {
 		}
 	}
 	else if(path == "exists") {
-		db.run("CREATE TABLE IF NOT EXISTS Files (code TEXT, fileName TEXT, fileData BLOB)");
+		db.run("CREATE TABLE IF NOT EXISTS Files (code TEXT, isForever TEXT, fileName TEXT, fileData BLOB)");
 		db.all("SELECT * FROM Files WHERE code = '" + unescape(get.code) + "'", function(err, result) {
 			res.end((result.length > 0).toString());
 		});
@@ -66,14 +72,17 @@ http.createServer(function(req, res) {
 	else if(path.substring(0, 2) == "f/") {
 		var code = unescape(path.substring(2));
 		db.serialize(function() {
-			db.run("CREATE TABLE IF NOT EXISTS Files (code TEXT, fileName TEXT, fileData BLOB)");
+			db.run("CREATE TABLE IF NOT EXISTS Files (code TEXT, isForever TEXT, fileName TEXT, fileData BLOB)");
 			db.all("SELECT * FROM Files WHERE code = '" + code + "'", function(err, result) {
 				if (typeof(result) != "undefined"&&result.length == 1){
+					if (result.forever == "false"){
+						db.run("DELETE FROM Files WHERE code = '"+code+"'");
+					}
 					res.setHeader("Content-disposition", "attachment; filename=" + result[0].fileName);
 					res.end(result[0].fileData);
 				}
 				else {
-					res.end("This file does not exist");				
+					res.end("This file does not exist");
 				}
 			});
 		});
