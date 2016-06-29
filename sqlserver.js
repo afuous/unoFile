@@ -49,7 +49,6 @@ http.createServer(function(req, res) {
 							console.log(typeof(result))
 						}
 						else {
-							var isForever = isForever
  							var sql = db.prepare("INSERT INTO Files VALUES ('"+ [code, isForever, file].join("','")+ "', ?)");
  							sql.run(data);
  							sql.finalize();
