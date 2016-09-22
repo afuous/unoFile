@@ -1,0 +1,26 @@
+{
+  "name": "unofile",
+  "version": "1.0.0",
+  "description": "Best file sharing ever",
+  "main": "mongoserver.js",
+  "dependencies": {
+    "express": "^4.14.0",
+    "mongoose": "^4.6.1",
+    "multer": "^1.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node mongoserver.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/afuous/unoFile.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/afuous/unoFile/issues"
+  },
+  "homepage": "https://github.com/afuous/unoFile#readme"
+}
