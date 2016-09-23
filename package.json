@@ -4,9 +4,15 @@
   "description": "Best file sharing ever",
   "main": "mongoserver.js",
   "dependencies": {
+    "aws-sdk": "^2.6.4",
     "express": "^4.14.0",
+    "formidable": "^1.0.17",
     "mongoose": "^4.6.1",
-    "multer": "^1.2.0"
+    "multer": "^1.2.0",
+    "multipart": "^0.1.5",
+    "s3-upload-stream": "^1.0.7",
+    "streamifier": "^0.1.1",
+    "sys": "0.0.1"
   },
   "devDependencies": {},
   "scripts": {
