@@ -46,6 +46,11 @@ app.get("/f/:code", function(req, res){
             res.end("This file does not exist");
         }
         else {
+            var url = AWSBucket.getSignedUrl("getObject", {
+                Key: file._id+"",
+                Expires: 60
+            });
+            res.redirect(url);
             if (!file.isForever){
                 AWSBucket.deleteObject({
                     Key: file._id
@@ -55,11 +60,6 @@ app.get("/f/:code", function(req, res){
                     });
                 });
             }
-            var url = AWSBucket.getSignedUrl("getObject", {
-                Key: file._id+"",
-                Expires: 60
-            });
-            res.redirect(url);
         }
     });
 });
