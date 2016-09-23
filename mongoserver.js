@@ -1,6 +1,7 @@
 var express = require("express");
 var mongoose = require("mongoose");
 var fs = require("fs");
+var multer = require("multer");
 
 var AWS = require("aws-sdk");
 AWS.config.loadFromPath("./aws-config.json");
@@ -46,7 +47,13 @@ app.get("/f/:code", function(req, res){
         }
         else {
             if (!file.isForever){
-                File.remove({code: code});
+                AWSBucket.deleteObject({
+                    Key: file._id
+                }, function(){
+                    File.remove({
+                        code: code
+                    });
+                });
             }
             var url = AWSBucket.getSignedUrl("getObject", {
                 Key: file._id+"",
@@ -57,7 +64,7 @@ app.get("/f/:code", function(req, res){
     });
 });
 
-app.post("/upload", function(req, res) {
+app.post("/upload", function(req, res) { //50mb
     var fileId = "";
     var file = req.query.file;
     var code = req.query.code;
