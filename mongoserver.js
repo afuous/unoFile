@@ -72,13 +72,12 @@ app.post("/upload", function(req, res) {
                         ContentType: "binary/octet-stream"
                     });
                     upload.on('part', function(details) {
-                        console.log(details);
                     });
                     upload.on('error', function(error) {
-                        console.log(error);
+                        res.end("4");
                     });
                     upload.on('uploaded', function(details) {
-                        console.log(details);
+                        res.end("0");
                     });
                     req.pipe(upload);
                 }
