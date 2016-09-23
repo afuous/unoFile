@@ -28,8 +28,36 @@ app.use(function(req, res, next) {
     }
 });
 
-app.post("/upload", function(req, res) {
+app.get("/exists", function(req, res){
+    var code = req.query.code;
+    File.count({
+        code: code
+    }, function(err, count){
+        res.end((count > 0).toString());
+    });
+});
 
+app.get("/f/:code", function(req, res){
+    File.findOne({
+        code: req.params.code
+    }, function(err, file){
+        if (!file){
+            res.end("This file does not exist");
+        }
+        else {
+            if (!file.isForever){
+                File.remove({code: code});
+            }
+            var url = AWSBucket.getSignedUrl("getObject", {
+                Key: file._id+"",
+                Expires: 60
+            });
+            res.redirect(url);
+        }
+    });
+});
+
+app.post("/upload", function(req, res) {
     var fileId = "";
     var file = req.query.file;
     var code = req.query.code;
@@ -69,10 +97,10 @@ app.post("/upload", function(req, res) {
                         Bucket: "files.unofile.net",
                         Key: fileInfo._id + "",
                         ACL: "public-read",
-                        ContentType: "binary/octet-stream"
+                        ContentType: "binary/octet-stream",
+                        ContentDisposition: "attachment; filename="+fileInfo.name
                     });
-                    upload.on('part', function(details) {
-                    });
+                    upload.on('part', function(details) {}); //May use later for progress
                     upload.on('error', function(error) {
                         res.end("4");
                     });
@@ -84,7 +112,4 @@ app.post("/upload", function(req, res) {
             });
         }
     });
-
-
-
 });
