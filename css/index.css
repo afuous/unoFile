@@ -108,13 +108,13 @@
 	width: 335px !important;
 }
 
-#uploadFile::-webkit-input-placeholder { 
+#uploadFile::-webkit-input-placeholder {
     color: #999999;
 }
 #uploadFile:-moz-placeholder {
    color: #999999;
 }
-#uploadFile::-moz-placeholder { 
+#uploadFile::-moz-placeholder {
    color: #999999;
 }
 #uploadFile:-ms-input-placeholder {
@@ -132,12 +132,17 @@
 	color: #0099FF;
 
 }
+.checkbox-text {
+	font-family: 'Roboto', sans-serif;
+	font-size: 0.75em;
+	color: #8F8F8F;
+}
 #download_error{
 	font-size: 1.1em;
 	color: #0099FF;
 
 }
-::-webkit-input-placeholder { 
+::-webkit-input-placeholder {
     color: white;
     opacity: .6;
 }
@@ -145,7 +150,7 @@
    color: white;
    opacity: .6;
 }
-::-moz-placeholder { 
+::-moz-placeholder {
    color: white;
    opacity: .6;
 }

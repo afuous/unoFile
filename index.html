@@ -14,7 +14,7 @@
 	<body>
 		<div class="topbar">
 			<h1 class="title" id="main_title">unoFile</h1>
-		</div>	
+		</div>
 		<div class="container-fluid">
 			<div class="row">
 				<div class="col-md-6 center">
@@ -25,7 +25,9 @@
 					<input id="uploadFile" placeholder="No file selected" disabled="disabled" /><br/>
 					<input class="input" id="downloadCode1" type="text" placeholder="Choose Code" onfocus="this.placeholder=''" onblur="this.placeholder='Enter Code'" />
 					<input type="button" class="button side_button" id="random" value="Random" /><br/>
+					<input id="upload-cb" class="" type="checkbox"/><label for="upload-cb" class="checkbox-text">Allow only one download of this file (Do not select this if you want a file to last forever)</label><br/>
 					<input class="input upload_button button" type="button" value="Upload!" id="upload" disabled><br/>
+
 					<p id="uploading">Uploading...</p>
 				</div>
 				<div class="col-md-6 center">
@@ -94,7 +96,7 @@
 			function dgid(id) {
 				return document.getElementById(id);
 			}
-			
+
 			dgid("random").onclick = function() {
 				var str = "";
 				for(var i = 0; i < 8; i++) {
@@ -106,7 +108,7 @@
 				   $('.upload_button').removeAttr('disabled');
 				}
 			};
-			
+
 			dgid("upload").onclick = function() {
 				var code = $('#downloadCode1').val();
 				var any = false;
@@ -138,14 +140,18 @@
 							}
 						}
 					};
-					xhr.open("POST", "/upload?file=" + escape(dgid("file").value.substring(dgid("file").value.lastIndexOf("\\") + 1)) + "&code=" + escape(dgid("downloadCode1").value), true);
+					var foreverStamp = "";
+					if ($("#upload-cb").is(':checked')) {
+						foreverStamp = "&forever=false";
+					}
+					xhr.open("POST", "/upload?file=" + escape(dgid("file").value.substring(dgid("file").value.lastIndexOf("\\") + 1)) + "&code=" + escape(dgid("downloadCode1").value) + foreverStamp, true);
 					xhr.send(dgid("file").files[0]);
 				}else{
 					$('#uploading').html('Spaces and the following characters are not allowed in the code<br/> \\ / \" \' < > { } : % | ? ^ + ` ');
 					$('#uploading').show();
 				}
 			}
-			
+
 			dgid("download").onclick = function() {
 				$('#download_error').hide();
 				var xhr = new XMLHttpRequest();

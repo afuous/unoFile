@@ -50,15 +50,22 @@ app.get("/f/:code", function(req, res){
                 Key: file._id+"",
                 Expires: 60
             });
-            res.redirect(url);
-            if (!file.isForever){
-                AWSBucket.deleteObject({
-                    Key: file._id
-                }, function(){
-                    File.remove({
-                        code: code
-                    });
+            if (file.isForever){
+                res.redirect(url);
+            }
+            else {
+                File.remove({
+                    code: req.params.code
+                }, function(err){
+                    res.redirect(url);
                 });
+                // AWSBucket.deleteObject({
+                //     Key: file._id+""
+                // }, function(err){
+                //     File.remove({
+                //         code: req.params.code
+                //     });
+                // });
             }
         }
     });
