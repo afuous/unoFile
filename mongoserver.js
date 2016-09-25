@@ -32,7 +32,11 @@ app.use(function(req, res, next) {
 app.get("/exists", function(req, res){
     var code = req.query.code;
     File.count({
-        code: code
+        code: code,
+        $or: [
+            {uploading: true},
+            {downloadable: true}
+        ]
     }, function(err, count){
         res.end((count > 0).toString());
     });
@@ -40,7 +44,8 @@ app.get("/exists", function(req, res){
 
 app.get("/f/:code", function(req, res){
     File.findOne({
-        code: req.params.code
+        code: req.params.code,
+        downloadable: true
     }, function(err, file){
         if (!file){
             res.end("This file does not exist");
@@ -54,9 +59,11 @@ app.get("/f/:code", function(req, res){
                 res.redirect(url);
             }
             else {
-                File.remove({
-                    code: req.params.code
-                }, function(err){
+                File.update({
+                    _id: file._id
+                },{$set : {
+                    downloadable: false
+                }}, function(err){
                     res.redirect(url);
                 });
                 // AWSBucket.deleteObject({
@@ -94,15 +101,22 @@ app.post("/upload", function(req, res) { //50mb
         res.end("2");
     }
     File.count({
-        code: code
+        code: code,
+        $or: [
+            {uploading: true},
+            {downloadable: true}
+        ]
     }, function(err, count) {
         if (count > 0) {
             res.end("1");
         } else {
+            console.log(count)
             File.create({
                 name: file,
                 code: code,
-                isForever: isForever
+                isForever: isForever,
+                downloadable: false,
+                uploading: true
             }, function(err, fileInfo) {
                 if (err) {
                     res.end("4");
@@ -114,12 +128,22 @@ app.post("/upload", function(req, res) { //50mb
                         ContentType: "binary/octet-stream",
                         ContentDisposition: "attachment; filename="+fileInfo.name
                     });
-                    upload.on('part', function(details) {}); //May use later for progress
+                    upload.on('part', function(details) {//May use later for progress
+                        //console.log(details)
+                    });
                     upload.on('error', function(error) {
                         res.end("4");
                     });
+                    //A cancelled upload may keep uploading:true forever
                     upload.on('uploaded', function(details) {
-                        res.end("0");
+                        File.update({
+                            _id: fileInfo._id
+                        },{$set : {
+                            downloadable: true,
+                            uploading: false
+                        }}, function(err){
+                            res.end("0");
+                        });
                     });
                     req.pipe(upload);
                 }
